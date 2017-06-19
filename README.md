@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/tsarenkotxt/spring-task-manager.svg?branch=master)](https://travis-ci.org/tsarenkotxt/spring-task-manager)
 ## Simple Task Manager
 
 ### Introduction
@@ -10,23 +11,23 @@ git clone https://github.com/tsarenkotxt/spring-task-manager.git
 cd spring-task-manager
 ```
 
-#### Build docker image
+#### Build docker image:
 ```
 mvn package docker:build
 ```
 
-#### Run application
+#### Run application:
 ```
 docker-compose up 
 ```
 ##
-#### Tomcat web application manager
+#### Tomcat web application manager:
 ```
 http://localhost:8080/manager
 username="tomcat" password="tomcat"
 ```
 
-#### Task Manager
+#### Task Manager:
 ```
 http://localhost:8080/task-manager/api/**
 ```
