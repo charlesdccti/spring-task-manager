@@ -1,0 +1,62 @@
+package com.nerdysoft.taskmanager.configuration.security;
+
+import com.nerdysoft.taskmanager.entity.User;
+import com.nerdysoft.taskmanager.repository.TaskRepository;
+import com.nerdysoft.taskmanager.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import java.io.Serializable;
+import java.util.Objects;
+
+@Component
+public class PermissionEvaluator implements org.springframework.security.access.PermissionEvaluator {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PermissionEvaluator.class);
+
+    private final UserRepository userRepository;
+    private final TaskRepository taskRepository;
+
+    @Inject
+    public PermissionEvaluator(UserRepository userRepository, TaskRepository taskRepository) {
+        this.userRepository = userRepository;
+        this.taskRepository = taskRepository;
+    }
+
+    @Override
+    public boolean hasPermission(Authentication authentication, Object targetDomainObjectId, Object userPermissionId) {
+        Integer taskId = (Integer) targetDomainObjectId;
+        Integer userId = (Integer) userPermissionId;
+        User authenticationUser = userRepository.findByEmail(authentication.getName());
+        if (Objects.equals(authenticationUser.getId(), userId)) {
+            if (taskId != null) {
+                if (!taskRepository.isTaskContainingInUser(taskId, userId)) {
+                    LOG.error("User with id {} does not contain a task with id {}", userId, taskId);
+                    return false;
+                }
+            }
+            return true;
+        }
+        LOG.error("User with id {} does not have permission", userId);
+        return false;
+    }
+
+    @Override
+    public boolean hasPermission(Authentication authentication, Serializable serializable, String s, Object o) {
+        return false;
+    }
+
+    public boolean hasPermissionForUserId(Authentication authentication, Object userPermissionId) {
+        Integer userId = (Integer) userPermissionId;
+        User authenticationUser = userRepository.findByEmail(authentication.getName());
+        if (Objects.equals(authenticationUser.getId(), userId)) {
+            return true;
+        }
+        LOG.error("User with id {} does not have permission", userId);
+        return false;
+    }
+
+}

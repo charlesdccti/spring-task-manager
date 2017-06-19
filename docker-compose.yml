@@ -1,0 +1,20 @@
+version: '2.0'
+
+services:
+  demo-mysql:
+    image: mysql:5.6
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=demo
+  task-manager-backend:
+    image: task-manager-backend
+    depends_on:
+      - demo-mysql
+    ports:
+      - 8080:8080
+    environment:
+      - DATABASE_HOST=demo-mysql
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=root
+      - DATABASE_NAME=demo
+      - DATABASE_PORT=3306
