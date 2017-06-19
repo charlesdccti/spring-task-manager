@@ -1,0 +1,16 @@
+sudo: required
+
+language: java
+jdk: oraclejdk8
+
+services:
+ - docker
+
+script:
+ - mvn package docker:build
+ - docker-compose up -d
+ - chmod +x test.sh
+ - ./test.sh
+
+after_script:
+ - docker-compose down
