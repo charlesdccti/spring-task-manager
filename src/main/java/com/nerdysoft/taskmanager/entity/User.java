@@ -3,6 +3,7 @@ package com.nerdysoft.taskmanager.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.Hibernate;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
@@ -35,26 +36,29 @@ public class User implements Serializable {
     public static final java.util.regex.Pattern EMAIL_PATTERN =
             java.util.regex.Pattern.compile(EMAIL_REGEX);
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Integer id;
 
     @Pattern(regexp = "[a-zA-Z\\s']{3,250}$")
     @Column(name = "user_name")
+    @SafeHtml
     private String userName;
 
     @Pattern(regexp = "[a-zA-Z\\s']{3,250}$")
     @Column(name = "user_last_name")
+    @SafeHtml
     private String userLastName;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Pattern(regexp = PASSWORD_REGEX)
     @Column(name = "password")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @Pattern(regexp = EMAIL_REGEX)
     @Column(name = "email", unique = true)
+    @SafeHtml
     private String email;
 
     @Column(name = "enabled")

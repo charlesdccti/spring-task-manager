@@ -3,6 +3,7 @@ package com.nerdysoft.taskmanager.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.Hibernate;
 import org.hibernate.validator.constraints.Range;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
@@ -15,13 +16,14 @@ public class Task implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Integer id;
 
     @Pattern(regexp = ".{0,250}$")
     @Column(name = "description")
+    @SafeHtml
     private String description;
 
     @Range(max = 360L)
@@ -34,14 +36,14 @@ public class Task implements Serializable {
     @Column(name = "is_completed")
     private Boolean isCompleted;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Pattern(regexp = ".{0,250}$")
     @Column(name = "created_by_user_with_email")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String createdByUserWithEmail;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Pattern(regexp = ".{0,250}$")
     @Column(name = "last_update_description")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String lastUpdateDescription;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
