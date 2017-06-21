@@ -40,7 +40,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void save(Task task, Integer userId) {
         User user = userRepository.getOne(userId);
-        task.setCreatedByUserWithEmail(user.getEmail());
+        task.setCreatedBy(user.getEmail());
         task.setNewShared(false);
         task.setLastUpdateDate(LocalDate.now());
         taskRepository.save(task);
@@ -56,7 +56,6 @@ public class TaskServiceImpl implements TaskService {
         task.setDescription(updated.getDescription());
         task.setEstimatedDays(updated.getEstimatedDays());
         task.setCompleted(updated.getCompleted());
-        task.setLastUpdateDescription("Updated by " + user.getEmail());
         task.setLastUpdateDate(LocalDate.now());
         LOG.debug("User with id {} update task with id {}", userId, taskId);
         return taskRepository.save(task);
@@ -99,8 +98,6 @@ public class TaskServiceImpl implements TaskService {
             throw new EntityNotFoundException(String.format("User with email %s not found", email));
         }
         task.setNewShared(true);
-        task.setLastUpdateDescription(String.format(
-                "This task share out for user with email %s", email));
         task.setLastUpdateDate(LocalDate.now());
         taskRepository.save(task);
         user.getTasks().add(task);
@@ -114,7 +111,7 @@ public class TaskServiceImpl implements TaskService {
     public void checkShared(Integer id, Integer userId) {
         Task task = taskRepository.getOne(id);
         User user = userRepository.getOneWithTasks(userId);
-        if (Objects.equals(user.getEmail(), task.getCreatedByUserWithEmail())) {
+        if (Objects.equals(user.getEmail(), task.getCreatedBy())) {
             LOG.error("For user with id {} access denied", userId);
             throw new AccessDeniedException(String.format("For user with id %d access is denied", userId));
         }

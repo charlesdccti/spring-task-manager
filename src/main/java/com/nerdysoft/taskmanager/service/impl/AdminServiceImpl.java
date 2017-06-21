@@ -150,8 +150,7 @@ public class AdminServiceImpl implements AdminService {
             throw new EntityNotFoundException(String.format("User with id %d not found", userId));
         }
         task.setNewShared(true);
-        task.setCreatedByUserWithEmail(email);
-        task.setLastUpdateDescription(String.format("Created by admin with email %s", email));
+        task.setCreatedBy(email);
         task.setLastUpdateDate(LocalDate.now());
         taskRepository.save(task);
         user.getTasks().add(task);
@@ -184,7 +183,6 @@ public class AdminServiceImpl implements AdminService {
         task.setEstimatedDays(updated.getEstimatedDays());
         task.setNewShared(updated.getNewShared());
         task.setCompleted(updated.getCompleted());
-        task.setLastUpdateDescription(String.format("Updated by admin with email %s", email));
         task.setLastUpdateDate(LocalDate.now());
         emailService.sendEmail(user.getEmail(), "Admin updated your task in Tusk Manager");
         LOG.debug("Admin with email {} update task with id {} for user with id {}",

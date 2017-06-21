@@ -14,29 +14,26 @@ public final class TestDataUtil {
     }
 
     public static final Task TASK_WITH_ID_1 = new Task(1, "learn Java", 20, false, true,
-            "eric_cartman@gmail.com", "edit description", LocalDate.of(2017, 6, 7));
+            "eric_cartman@gmail.com", LocalDate.of(2017, 6, 7));
     public static final Task TASK_WITH_ID_2 = new Task(2, "learn C", 15, true, false,
-            "kenny_mckormick@gmail.com", null, LocalDate.of(2017, 6, 17));
+            "kenny_mckormick@gmail.com", LocalDate.of(2017, 6, 17));
     public static final Task TASK_WITH_ID_3 = new Task(3, "learn C++", 30, true, false,
-            "kyle_broflovski@gmail.com", "completed", LocalDate.of(2017, 6, 2));
+            "kyle_broflovski@gmail.com", LocalDate.of(2017, 6, 2));
     public static final Task TASK_WITH_ID_4 = new Task(4, "learn C#", 25, false, false,
-            "stanley_marsh@gmail.com", "completed", LocalDate.of(2017, 5, 29));
+            "stanley_marsh@gmail.com", LocalDate.of(2017, 5, 29));
     public static final Task TASK_WITH_ID_6 = new Task(6, "learn Sql/noSql", 27, false, true,
-            "eric_cartman@gmail.com", "created", LocalDate.of(2017, 5, 28));
+            "eric_cartman@gmail.com", LocalDate.of(2017, 5, 28));
 
     public static final Task UPDATED_TASK_WITH_ID_1 = new Task(1, "learn Java EE", 30, false, true,
-            "eric_cartman@gmail.com", "Updated by eric_cartman@gmail.com", LocalDate.now());
-    public static final Task UPDATED_TASK_WITH_ID_6 = new Task(6, "update test task", 90, false, true,
-            "", "", LocalDate.now());
+            "eric_cartman@gmail.com", LocalDate.now());
+    public static final Task UPDATED_TASK_WITH_ID_6 = new Task(6, "updated test task", 90, false, true, "", LocalDate.now());
 
 
     public static final Task INVALID_UPDATED_TASK_WITH_ID_1 = new Task(1, "", 999999, false, true,
-            "eric_cartman@gmail.com", "Updated by eric_cartman@gmail.com", LocalDate.now());
-    public static final Task INVALID_NEW_TASK = new Task(0, "", -1, false, true,
-            "", "", LocalDate.now());
+            "eric_cartman@gmail.com", LocalDate.now());
+    public static final Task INVALID_NEW_TASK = new Task(0, "", -1, false, true, "", LocalDate.now());
 
-    public static final Task NEW_TASK = new Task(0, "New test task", 20, false, true,
-            "", "", LocalDate.now());
+    public static final Task NEW_TASK = new Task(0, "New test task", 20, false, true, "", LocalDate.now());
 
     public static final User USER_WITH_ID_1 = new User(1, "Eric", "Cartman",
             "g5j$3p4xNxW37GQw", "eric_cartman@gmail.com", true, false, LocalDate.of(2017, 5, 9),

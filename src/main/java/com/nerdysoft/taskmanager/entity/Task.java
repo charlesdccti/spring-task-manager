@@ -37,14 +37,9 @@ public class Task implements Serializable {
     private Boolean isCompleted;
 
     @Pattern(regexp = ".{0,250}$")
-    @Column(name = "created_by_user_with_email")
+    @Column(name = "created_by")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private String createdByUserWithEmail;
-
-    @Pattern(regexp = ".{0,250}$")
-    @Column(name = "last_update_description")
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private String lastUpdateDescription;
+    private String createdBy;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Column(name = "last_update_date")
@@ -54,14 +49,13 @@ public class Task implements Serializable {
     }
 
     public Task(Integer id, String description, Integer estimatedDays, Boolean isNewShared, Boolean isCompleted,
-                String createdByUserWithEmail, String lastUpdateDescription, LocalDate lastUpdateDate) {
+                String createdBy, LocalDate lastUpdateDate) {
         this.id = id;
         this.description = description;
         this.estimatedDays = estimatedDays;
         this.isNewShared = isNewShared;
         this.isCompleted = isCompleted;
-        this.createdByUserWithEmail = createdByUserWithEmail;
-        this.lastUpdateDescription = lastUpdateDescription;
+        this.createdBy = createdBy;
         this.lastUpdateDate = lastUpdateDate;
     }
 
@@ -105,20 +99,12 @@ public class Task implements Serializable {
         isCompleted = completed;
     }
 
-    public String getCreatedByUserWithEmail() {
-        return createdByUserWithEmail;
+    public String getCreatedBy() {
+        return createdBy;
     }
 
-    public void setCreatedByUserWithEmail(String createdByUserWithEmail) {
-        this.createdByUserWithEmail = createdByUserWithEmail;
-    }
-
-    public String getLastUpdateDescription() {
-        return lastUpdateDescription;
-    }
-
-    public void setLastUpdateDescription(String lastUpdateDescription) {
-        this.lastUpdateDescription = lastUpdateDescription;
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 
     public LocalDate getLastUpdateDate() {

@@ -23,14 +23,14 @@ INSERT INTO `users` (`user_name`, `user_last_name`, `password`, `email`,
   ('Timmy', 'Timmy', '$2a$10$vuEKDsiqD48.nKXpuWLmMu9KGzuJj2b855BMEnaRxbG/tUy5zXoBq',
    'timmy_timmy@gmail.com', FALSE, FALSE, '2017-05-09');
 
-INSERT INTO `tasks` (`description`, `estimated_days`, `is_new_shared`, `is_completed`, `created_by_user_with_email`,
-                     `last_update_description`, `last_update_date`) VALUES
-  ('learn Java', 20, FALSE, TRUE, 'eric_cartman@gmail.com', 'edit description', '2017-06-07'),
-  ('learn C', 15, TRUE, FALSE, 'kenny_mckormick@gmail.com', '', '2017-06-17'),
-  ('learn C++', 30, TRUE, FALSE, 'kyle_broflovski@gmail.com', 'completed', '2017-06-02'),
-  ('learn C#', 25, FALSE, FALSE, 'stanley_marsh@gmail.com', 'completed', '2017-05-29'),
-  ('learn Linux', 10, TRUE, FALSE, 'barbara_stevens@gmail.com', 'edit estimate', '2017-06-20'),
-  ('learn Sql/noSql', 27, FALSE, TRUE, 'eric_cartman@gmail.com', 'created', '2017-05-28');
+INSERT INTO `tasks` (`description`, `estimated_days`, `is_new_shared`, `is_completed`, `created_by`, `last_update_date`)
+VALUES
+  ('learn Java', 20, FALSE, TRUE, 'eric_cartman@gmail.com', '2017-06-07'),
+  ('learn C', 15, TRUE, FALSE, 'kenny_mckormick@gmail.com', '2017-06-17'),
+  ('learn C++', 30, TRUE, FALSE, 'kyle_broflovski@gmail.com', '2017-06-02'),
+  ('learn C#', 25, FALSE, FALSE, 'stanley_marsh@gmail.com', '2017-05-29'),
+  ('learn Linux', 10, TRUE, FALSE, 'barbara_stevens@gmail.com', '2017-06-20'),
+  ('learn Sql/noSql', 27, FALSE, TRUE, 'eric_cartman@gmail.com', '2017-05-28');
 
 INSERT INTO `user_roles` (`user_id`, `role`) VALUES
   (1, 'ROLE_USER'),
