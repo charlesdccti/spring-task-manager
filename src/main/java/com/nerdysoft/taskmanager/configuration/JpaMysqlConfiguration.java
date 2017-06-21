@@ -24,10 +24,10 @@ import java.util.Properties;
 @EnableTransactionManagement
 @ComponentScan("com.nerdysoft.taskmanager.entity")
 @EnableJpaRepositories("com.nerdysoft.taskmanager.repository")
-@PropertySource(value = {"classpath:mysql.properties"})
+@PropertySource(value = {"classpath:database/mysql/mysql.properties"})
 public class JpaMysqlConfiguration {
 
-    @Value("classpath:mysql.sql")
+    @Value("classpath:database/mysql/populate.sql")
     private Resource dataScript;
 
     private final Environment env;

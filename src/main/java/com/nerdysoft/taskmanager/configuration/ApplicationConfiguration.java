@@ -9,7 +9,7 @@ import java.util.Properties;
 
 @Configuration
 @ComponentScan
-@PropertySource(value = {"classpath:email.properties"})
+@PropertySource(value = {"classpath:email/email.properties"})
 @Import({ServiceConfiguration.class, MvcConfiguration.class, JpaMysqlConfiguration.class, JpaHsqldbConfiguration.class})
 public class ApplicationConfiguration {
 

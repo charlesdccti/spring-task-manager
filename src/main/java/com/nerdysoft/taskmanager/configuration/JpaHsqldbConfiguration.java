@@ -28,7 +28,7 @@ import java.util.Properties;
 @EnableJpaRepositories("com.nerdysoft.taskmanager.repository")
 public class JpaHsqldbConfiguration {
 
-    @Value("classpath:hsqldb.sql")
+    @Value("classpath:database/hsqldb/populate.sql")
     private Resource dataScript;
 
     @Bean
