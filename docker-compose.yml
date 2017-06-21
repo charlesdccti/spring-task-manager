@@ -3,6 +3,7 @@ version: '2.1'
 services:
   demo-mysql:
     image: mysql:5.6
+    container_name: demo-mysql
     healthcheck:
      test: "exit 0"
     environment:
@@ -10,6 +11,7 @@ services:
       - MYSQL_DATABASE=demo
   task-manager-backend:
     image: task-manager-backend
+    container_name: task-manager-backend
     depends_on:
      demo-mysql:
       condition: service_healthy
