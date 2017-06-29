@@ -3,7 +3,6 @@ package com.nerdysoft.taskmanager.service;
 import com.nerdysoft.taskmanager.entity.User;
 import org.springframework.security.access.method.P;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -23,7 +22,7 @@ public interface UserService {
 
     @PreAuthorize("hasRole('ROLE_ADMIN') OR" +
             " @permissionEvaluator.hasPermissionForUser(authentication, #id)")
-    User update(@P("id") Integer id, User user, Authentication authentication);
+    User update(@P("id") Integer id, User user);
 
     @PreAuthorize("hasRole('ROLE_ADMIN') OR" +
             " @permissionEvaluator.hasPermissionForUser(authentication, #id)")

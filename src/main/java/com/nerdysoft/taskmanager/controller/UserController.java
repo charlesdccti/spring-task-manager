@@ -4,7 +4,6 @@ import com.nerdysoft.taskmanager.entity.User;
 import com.nerdysoft.taskmanager.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
@@ -40,8 +39,8 @@ public class UserController {
 
     @PutMapping(value = "/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public User update(@PathVariable Integer id, @Valid @RequestBody User user, Authentication authentication) {
-        return userService.update(id, user, authentication);
+    public User update(@PathVariable Integer id, @Valid @RequestBody User user) {
+        return userService.update(id, user);
     }
 
     @PatchMapping

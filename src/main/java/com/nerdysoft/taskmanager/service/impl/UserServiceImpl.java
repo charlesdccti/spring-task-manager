@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static com.nerdysoft.taskmanager.entity.User.EMAIL_PATTERN;
 import static com.nerdysoft.taskmanager.entity.User.PASSWORD_PATTERN;
@@ -83,7 +81,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User update(Integer id, User updated, Authentication authentication) {
+    public User update(Integer id, User updated) {
         User user = userRepository.getOne(id);
         if (!Objects.equals(user.getEmail(), updated.getEmail()) &&
                 userRepository.isEmailAlreadyExists(updated.getEmail())) {
@@ -94,16 +92,14 @@ public class UserServiceImpl implements UserService {
         user.setUserName(updated.getUserName());
         user.setUserLastName(updated.getUserLastName());
         user.setEmail(updated.getEmail().toLowerCase());
-        List<String> authenticationRoles = authentication.getAuthorities()
-                .stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
-        if (authenticationRoles.contains("ROLE_ADMIN")) {
+        if (updated.getEnabled() != null && updated.getAdmin() != null) {
             user.setEnabled(updated.getEnabled());
             user.setAdmin(updated.getAdmin());
-            if (updated.getAdmin() && !user.getRoles().contains(Role.ROLE_ADMIN)) {
-                user.getRoles().add(Role.ROLE_ADMIN);
-            } else {
-                user.setRoles(Collections.singleton(Role.ROLE_USER));
-            }
+        }
+        if (Boolean.TRUE.equals(updated.getAdmin()) && !user.getRoles().contains(Role.ROLE_ADMIN)) {
+            user.getRoles().add(Role.ROLE_ADMIN);
+        } else {
+            user.setRoles(Collections.singleton(Role.ROLE_USER));
         }
         LOG.debug("Update user with id {}", id);
         return userRepository.save(user);
