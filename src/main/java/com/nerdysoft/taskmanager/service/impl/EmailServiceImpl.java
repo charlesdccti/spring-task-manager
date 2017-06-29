@@ -42,7 +42,7 @@ public class EmailServiceImpl implements EmailService {
             javaMailSender.send(message);
             LOG.error("Successful sending to mail {}", email);
         } catch (MessagingException e) {
-            LOG.error("Couldn't send email to user {}: {}", email, e.getLocalizedMessage());
+            LOG.error("Couldn't send email to user with email {}: {}", email, e.getLocalizedMessage());
         }
     }
 }

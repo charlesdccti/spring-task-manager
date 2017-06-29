@@ -3,26 +3,36 @@ package com.nerdysoft.taskmanager.service;
 import com.nerdysoft.taskmanager.entity.User;
 import org.springframework.security.access.method.P;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+
+import java.util.List;
 
 public interface UserService {
 
-    void save(User user);
-
-    @PreAuthorize("hasRole('ROLE_USER') AND" +
-            " @permissionEvaluator.hasPermissionForUserId(authentication, #id)")
-    User update(@P("id") Integer id, User user);
-
-    @PreAuthorize("hasRole('ROLE_USER') AND" +
-            " @permissionEvaluator.hasPermissionForUserId(authentication, #id)")
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR" +
+            " @permissionEvaluator.hasPermissionForUser(authentication, #id)")
     User getOne(@P("id") Integer id);
 
-    @PreAuthorize("hasRole('ROLE_USER') AND" +
-            " @permissionEvaluator.hasPermissionForUserId(authentication, #id)")
-    void delete(@P("id") Integer id, String confirmedPassword);
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    List<User> findByTaskId(Integer taskId);
 
-    @PreAuthorize("hasRole('ROLE_USER') AND" +
-            " @permissionEvaluator.hasPermissionForUserId(authentication, #id)")
-    void resetPassword(@P("id") Integer id, String confirmedPassword, User user);
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    List<User> findAll();
 
-    void restorePassword(String email);
+    void save(User user);
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR" +
+            " @permissionEvaluator.hasPermissionForUser(authentication, #id)")
+    User update(@P("id") Integer id, User user, Authentication authentication);
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR" +
+            " @permissionEvaluator.hasPermissionForUser(authentication, #id)")
+    void updatePassword(@P("id") Integer id, String currentPassword, String newPassword);
+
+    void resetPassword(String email);
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR" +
+            " @permissionEvaluator.hasPermissionForUser(authentication, #id)")
+    void delete(@P("id") Integer id, String password);
+
 }

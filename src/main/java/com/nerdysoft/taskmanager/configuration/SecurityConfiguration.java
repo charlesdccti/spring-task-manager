@@ -1,10 +1,11 @@
 package com.nerdysoft.taskmanager.configuration;
 
-import com.nerdysoft.taskmanager.configuration.security.NoAntPathRequestMatcher;
+import com.nerdysoft.taskmanager.configuration.security.RequestMatcher;
 import com.nerdysoft.taskmanager.configuration.security.RestUnauthorizedEntryPoint;
 import com.nerdysoft.taskmanager.configuration.security.UserDetailsService;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,6 +19,8 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
@@ -53,25 +56,22 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        String[] patterns = new String[]{
-                "/",
-                "/api/login",
-                "/api/registration",
-                "/api/users/restore-password/**"
-        };
+        Map<String, String> patterns = new HashMap<>();
+        patterns.put("/api/login", "POST");
+        patterns.put("/api/users/", "POST");
+        patterns.put("/api/users", "PATCH");
+
         http
                 .csrf()
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                    .requireCsrfProtectionMatcher(new NoAntPathRequestMatcher(patterns))
+                    .requireCsrfProtectionMatcher(new RequestMatcher(patterns))
                     .and()
                 .authorizeRequests()
-                    .antMatchers("/").permitAll()
-                    .antMatchers("/api/login").anonymous()
-                    .antMatchers("/api/registration").anonymous()
-                    .antMatchers("/api/users/restore-password/**").anonymous()
-                    .antMatchers("/api/**").hasRole("USER")
-                    .antMatchers("/api/admin/**").hasRole("ADMIN")
-                    .anyRequest().authenticated()
+                    .antMatchers(HttpMethod.POST, "/api/login").anonymous()
+                    .antMatchers(HttpMethod.POST, "/api/users/").anonymous()
+                    .antMatchers(HttpMethod.PATCH, "/api/users").anonymous()
+                    .antMatchers("/api/users/**").hasAnyRole("USER", "ADMIN")
+                    .antMatchers("/api/tasks/**").hasAnyRole("USER", "ADMIN")
                     .and()
                 .exceptionHandling()
                     .authenticationEntryPoint(restAuthenticationEntryPoint)

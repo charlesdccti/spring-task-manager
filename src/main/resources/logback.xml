@@ -9,10 +9,6 @@
         </layout>
     </appender>
 
-    <logger name="org.springframework" level="info" additivity="false">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-
     <logger name="com.nerdysoft.taskmanager" level="debug" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>

@@ -6,9 +6,12 @@ import org.hibernate.validator.constraints.Range;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "tasks")
@@ -18,42 +21,48 @@ public class Task implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "task_id")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Integer id;
 
-    @Pattern(regexp = ".{0,250}$")
-    @Column(name = "description")
+    @Column(name = "description", length = 500)
+    @NotNull
+    @Pattern(regexp = ".{3,500}$")
     @SafeHtml
     private String description;
 
-    @Range(max = 360L)
     @Column(name = "estimated_days")
+    @NotNull
+    @Range(max = 360L)
     private Integer estimatedDays;
 
-    @Column(name = "is_new_shared")
-    private Boolean isNewShared;
-
     @Column(name = "is_completed")
+    @NotNull
     private Boolean isCompleted;
 
-    @Pattern(regexp = ".{0,250}$")
     @Column(name = "created_by")
+    @Pattern(regexp = ".{8,250}$")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String createdBy;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Column(name = "last_update_date")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDate lastUpdateDate;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "users_tasks",
+            joinColumns = {@JoinColumn(name = "task_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")})
+    private List<User> users = new ArrayList<>();
 
     public Task() {
     }
 
-    public Task(Integer id, String description, Integer estimatedDays, Boolean isNewShared, Boolean isCompleted,
+    public Task(Integer id, String description, Integer estimatedDays, Boolean isCompleted,
                 String createdBy, LocalDate lastUpdateDate) {
         this.id = id;
         this.description = description;
         this.estimatedDays = estimatedDays;
-        this.isNewShared = isNewShared;
         this.isCompleted = isCompleted;
         this.createdBy = createdBy;
         this.lastUpdateDate = lastUpdateDate;
@@ -83,14 +92,6 @@ public class Task implements Serializable {
         this.estimatedDays = estimatedDays;
     }
 
-    public Boolean getNewShared() {
-        return isNewShared;
-    }
-
-    public void setNewShared(Boolean newShared) {
-        isNewShared = newShared;
-    }
-
     public Boolean getCompleted() {
         return isCompleted;
     }
@@ -113,6 +114,14 @@ public class Task implements Serializable {
 
     public void setLastUpdateDate(LocalDate lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
+    }
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
 
     @Override

@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -17,12 +18,9 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
-@NamedEntityGraph(name = User.GRAPH_WITH_TASKS, attributeNodes = {@NamedAttributeNode("tasks")})
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    public static final String GRAPH_WITH_TASKS = "User.withTasks";
 
     private static final String PASSWORD_REGEX =
             "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$";
@@ -38,26 +36,30 @@ public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Integer id;
 
-    @Pattern(regexp = "[a-zA-Z\\s']{3,250}$")
     @Column(name = "user_name")
+    @NotNull
+    @Pattern(regexp = "[a-zA-Z\\s']{3,250}$")
     @SafeHtml
     private String userName;
 
-    @Pattern(regexp = "[a-zA-Z\\s']{3,250}$")
     @Column(name = "user_last_name")
+    @NotNull
+    @Pattern(regexp = "[a-zA-Z\\s']{3,250}$")
     @SafeHtml
     private String userLastName;
 
-    @Pattern(regexp = PASSWORD_REGEX)
     @Column(name = "password")
+    @Pattern(regexp = PASSWORD_REGEX)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    @Pattern(regexp = EMAIL_REGEX)
     @Column(name = "email", unique = true)
+    @NotNull
+    @Pattern(regexp = EMAIL_REGEX)
     @SafeHtml
     private String email;
 
@@ -71,11 +73,11 @@ public class User implements Serializable {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDate registered;
 
+    @Column(name = "role")
     @JsonIgnore
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @ElementCollection(fetch = FetchType.EAGER)
-    @Column(name = "role")
     private Set<Role> roles;
 
     @ManyToMany(cascade = CascadeType.REMOVE)
@@ -88,7 +90,7 @@ public class User implements Serializable {
     }
 
     public User(Integer id, String userName, String userLastName, String password, String email,
-                Boolean enabled, Boolean isAdmin, LocalDate registered, Set<Role> roles, List<Task> tasks) {
+                Boolean enabled, Boolean isAdmin, LocalDate registered) {
         this.id = id;
         this.userName = userName;
         this.userLastName = userLastName;
@@ -97,8 +99,6 @@ public class User implements Serializable {
         this.enabled = enabled;
         this.isAdmin = isAdmin;
         this.registered = registered;
-        this.roles = roles;
-        this.tasks = tasks;
     }
 
     public Integer getId() {

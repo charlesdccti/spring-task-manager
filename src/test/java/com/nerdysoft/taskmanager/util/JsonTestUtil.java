@@ -1,5 +1,6 @@
 package com.nerdysoft.taskmanager.util;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.nerdysoft.taskmanager.entity.User;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -34,12 +35,13 @@ public final class JsonTestUtil {
     }
 
     private static ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.enable(MapperFeature.DEFAULT_VIEW_INCLUSION);
-        objectMapper.registerModule(new Hibernate5Module());
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        return objectMapper;
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(MapperFeature.DEFAULT_VIEW_INCLUSION);
+        mapper.registerModule(new Hibernate5Module());
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+        return mapper;
     }
 
 }

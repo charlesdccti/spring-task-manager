@@ -2,12 +2,14 @@ package com.nerdysoft.taskmanager;
 
 import com.nerdysoft.taskmanager.configuration.ApplicationConfiguration;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -16,7 +18,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
@@ -35,12 +36,13 @@ public class AbstractTestConfiguration {
     @Resource
     private WebApplicationContext webApplicationContext;
 
-    @PostConstruct
-    private void postConstruct() {
+    @Before
+    public void setup() {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
                 .apply(springSecurity())
                 .build();
+        SecurityContextHolder.clearContext();
     }
 
     @Rule

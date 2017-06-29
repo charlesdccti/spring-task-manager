@@ -12,7 +12,7 @@ import java.util.List;
 public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     @Query("SELECT u.tasks FROM User u WHERE u.id=:userId")
-    List<Task> findTasksByUserId(@Param("userId") Integer userId);
+    List<Task> findByUserId(@Param("userId") Integer userId);
 
     @Query("SELECT (COUNT (t) > 0) AS boolean FROM User u " +
             "INNER JOIN u.tasks t WHERE t.id =:id AND u.id=:userId ")

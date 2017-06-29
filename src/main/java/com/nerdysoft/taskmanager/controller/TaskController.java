@@ -3,6 +3,7 @@ package com.nerdysoft.taskmanager.controller;
 import com.nerdysoft.taskmanager.entity.Task;
 import com.nerdysoft.taskmanager.service.TaskService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
@@ -20,42 +21,26 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @PostMapping("/save-for/{userId}")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void save(@PathVariable Integer userId, @Valid @RequestBody Task task) {
-        taskService.save(task, userId);
+    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Task> getAll() {
+        return taskService.findAll();
     }
 
-    @PutMapping("/update/{id}/for/{userId}")
-    public Task update(@PathVariable Integer id, @PathVariable Integer userId,
-                       @Valid @RequestBody Task task) {
-        return taskService.update(id, userId, task);
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Task getOne(@PathVariable Integer id) {
+        return taskService.getOne(id);
     }
 
-    @GetMapping("/get-one/{id}/for/{userId}")
-    public Task getOne(@PathVariable Integer id, @PathVariable Integer userId) {
-        return taskService.getOne(id, userId);
+    @PutMapping(value = "/{id}",
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Task update(@PathVariable Integer id, @Valid @RequestBody Task task) {
+        return taskService.update(id, task);
     }
 
-    @GetMapping("/find-all/for/{userId}")
-    public List<Task> findTasksByUserId(@PathVariable Integer userId) {
-        return taskService.findTasksByUserId(userId);
-    }
-
-    @DeleteMapping("/delete/{id}/for/{userId}")
-    public void delete(@PathVariable Integer id, @PathVariable Integer userId) {
-        taskService.delete(id, userId);
-    }
-
-    @PutMapping("/share/{id}/by-user/{userId}/for/{email:.+}")
-    public void share(@PathVariable Integer id, @PathVariable Integer userId,
-                      @PathVariable String email) {
-        taskService.share(id, userId, email);
-    }
-
-    @PutMapping("/check-shared/{id}/for/{userId}")
-    public void checkShared(@PathVariable Integer id, @PathVariable Integer userId) {
-        taskService.checkShared(id, userId);
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Integer id) {
+        taskService.delete(id);
     }
 
 }

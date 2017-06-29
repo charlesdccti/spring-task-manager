@@ -1,8 +1,10 @@
-package com.nerdysoft.taskmanager.web.task;
+package com.nerdysoft.taskmanager.web.users.UserAccessDenied;
 
 import com.nerdysoft.taskmanager.AbstractTestConfiguration;
 import com.nerdysoft.taskmanager.util.JsonTestUtil;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.springframework.http.MediaType;
 
 import static com.nerdysoft.taskmanager.util.SecurityTestUtil.userAuth;
@@ -12,49 +14,51 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class TaskAccessDeniedControllerTest extends AbstractTestConfiguration {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class UserAccessDeniedTest extends AbstractTestConfiguration {
 
     @Test
-    public void updateTask() throws Exception {
-        mockMvc.perform(put("/api/tasks/update/1/for/2")
-                .contentType(MediaType.APPLICATION_JSON)
+    public void test_1_getUsers() throws Exception {
+        mockMvc.perform(get("/api/users/")
                 .with(userAuth(USER_WITH_ID_1))
+                .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void test_2_getUser() throws Exception {
+        mockMvc.perform(get("/api/users/3")
+                .with(userAuth(USER_WITH_ID_2))
+                .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void test_3_updateUser() throws Exception {
+        mockMvc.perform(put("/api/users/1")
+                .with(userAuth(USER_WITH_ID_2))
                 .with(csrf())
-                .content(JsonTestUtil.writeValue(UPDATED_TASK_WITH_ID_1)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonTestUtil.writeValue(UPDATED_USER_WITH_ID_1)))
                 .andDo(print())
                 .andExpect(status().isForbidden());
     }
 
     @Test
-    public void getTask() throws Exception {
-        mockMvc.perform(get("/api/tasks/get-one/6/for/2")
-                .with(userAuth(USER_WITH_ID_1))
+    public void test_4_userUpdatePassword() throws Exception {
+        mockMvc.perform(patch("/api/users/1" +
+                "?currentPassword=g5j$3p4xNxW37GQw&newPassword=NEWg5j$3p4xNxW37GQw")
+                .with(userAuth(USER_WITH_ID_3))
                 .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isForbidden());
     }
 
     @Test
-    public void getTasksForUser() throws Exception {
-        mockMvc.perform(get("/api/tasks/find-all/for/1")
-                .with(userAuth(USER_WITH_ID_2))
-                .with(csrf()))
-                .andDo(print())
-                .andExpect(status().isForbidden());
-    }
-
-    @Test
-    public void deleteTask() throws Exception {
-        mockMvc.perform(delete("/api/tasks/delete/2/for/1")
-                .with(userAuth(USER_WITH_ID_2))
-                .with(csrf()))
-                .andDo(print())
-                .andExpect(status().isForbidden());
-    }
-
-    @Test
-    public void shareTask() throws Exception {
-        mockMvc.perform(put("/api/tasks/share/1/by-user/4/for/eric_cartman@gmail.com")
+    public void test_5_deleteUser() throws Exception {
+        mockMvc.perform(delete("/api/users/1?password=g5j$3p4xNxW37GQw")
                 .with(userAuth(USER_WITH_ID_4))
                 .with(csrf()))
                 .andDo(print())
@@ -62,8 +66,17 @@ public class TaskAccessDeniedControllerTest extends AbstractTestConfiguration {
     }
 
     @Test
-    public void checkSharedTask() throws Exception {
-        mockMvc.perform(put("/api/tasks/check-shared/4/for/2")
+    public void test_6_getTasksForUser() throws Exception {
+        mockMvc.perform(get("/api/users/3/tasks")
+                .with(userAuth(USER_WITH_ID_7))
+                .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void test_7_deleteTasksForUser() throws Exception {
+        mockMvc.perform(delete("/api/users/4/tasks")
                 .with(userAuth(USER_WITH_ID_2))
                 .with(csrf()))
                 .andDo(print())

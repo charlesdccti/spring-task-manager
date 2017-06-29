@@ -1,62 +1,108 @@
 package com.nerdysoft.taskmanager.web.security;
 
 import com.nerdysoft.taskmanager.AbstractTestConfiguration;
-import com.nerdysoft.taskmanager.util.SecurityTestUtil;
-import com.nerdysoft.taskmanager.util.TestDataUtil;
+import com.nerdysoft.taskmanager.util.JsonTestUtil;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
+import org.springframework.http.MediaType;
 
+import static com.nerdysoft.taskmanager.util.SecurityTestUtil.*;
+import static com.nerdysoft.taskmanager.util.TestDataUtil.*;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SecurityTest extends AbstractTestConfiguration {
 
     @Test
-    public void loginSuccess() throws Exception {
-        mockMvc.perform(SecurityTestUtil.LOGIN_SUCCESS)
+    public void test_1_loginSuccess() throws Exception {
+        mockMvc.perform(post("/api/login")
+                .param("email", "eric_cartman@gmail.com")
+                .param("password", "g5j$3p4xNxW37GQw")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void loginFailure() throws Exception {
-        mockMvc.perform(SecurityTestUtil.LOGIN_FAILURE)
+    public void test_2_loginFailure() throws Exception {
+        mockMvc.perform(post("/api/login")
+                .param("email", "eric_cartmann@gmail.com")
+                .param("password", "4p$4xNxW37FGw")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    public void loginWithSuspendedUser() throws Exception {
-        mockMvc.perform(SecurityTestUtil.LOGIN_WITH_SUSPENDED_USER)
+    public void test_3_loginWithSuspendedUser() throws Exception {
+        mockMvc.perform(post("/api/login")
+                .param("email", "timmy_timmy@gmail.com")
+                .param("password", "g5j$3p4xNxW37GQw")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andDo(print())
                 .andExpect(status().isForbidden());
     }
 
     @Test
-    public void getUser() throws Exception {
+    public void test_4_logout() throws Exception {
         mockMvc.perform(get("/api/logout")
-                .with(SecurityTestUtil.userAuth(TestDataUtil.USER_WITH_ID_2))
+                .with(userAuth(USER_WITH_ID_2))
                 .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void csrfTokenSuccess() throws Exception {
-        mockMvc.perform(get("/api/users/1")
-                .with(SecurityTestUtil.userAuth(TestDataUtil.USER_WITH_ID_1))
-                .with(csrf()))
+    public void test_5_getTaskForAnonymous() throws Exception {
+        mockMvc.perform(get("/api/tasks/1"))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    public void csrfTokenFailure() throws Exception {
+    public void test_6_getTaskForAnonymousWithCsrfToken() throws Exception {
+        mockMvc.perform(get("/api/tasks/1")
+                .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void test_7_withOutCsrfToken() throws Exception {
         mockMvc.perform(get("/api/users/1")
-                .with(SecurityTestUtil.userAuth(TestDataUtil.USER_WITH_ID_1)))
+                .with(userAuth(USER_WITH_ID_1)))
                 .andDo(print())
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void test_8_invalidCsrfToken() throws Exception {
+        mockMvc.perform(get("/api/users/1")
+                .with(userAuth(USER_WITH_ID_1))
+                .with(csrf().useInvalidToken()))
+                .andDo(print())
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void test_9_UserTryUpdateRowIsAdmin() throws Exception {
+        mockMvc.perform(put("/api/users/3")
+                .with(userAuth(USER_WITH_ID_3))
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonTestUtil.writeValue(UPDATED_USER_WITH_ID_3)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString(
+                        JsonTestUtil.writeValue(USER_WITH_ID_3))));
     }
 
 }

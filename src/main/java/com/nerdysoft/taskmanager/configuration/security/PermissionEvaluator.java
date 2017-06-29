@@ -27,20 +27,7 @@ public class PermissionEvaluator implements org.springframework.security.access.
     }
 
     @Override
-    public boolean hasPermission(Authentication authentication, Object targetDomainObjectId, Object userPermissionId) {
-        Integer taskId = (Integer) targetDomainObjectId;
-        Integer userId = (Integer) userPermissionId;
-        User authenticationUser = userRepository.findByEmail(authentication.getName());
-        if (Objects.equals(authenticationUser.getId(), userId)) {
-            if (taskId != null) {
-                if (!taskRepository.isTaskContainingInUser(taskId, userId)) {
-                    LOG.error("User with id {} does not contain a task with id {}", userId, taskId);
-                    return false;
-                }
-            }
-            return true;
-        }
-        LOG.error("User with id {} does not have permission", userId);
+    public boolean hasPermission(Authentication authentication, Object o, Object o1) {
         return false;
     }
 
@@ -49,13 +36,21 @@ public class PermissionEvaluator implements org.springframework.security.access.
         return false;
     }
 
-    public boolean hasPermissionForUserId(Authentication authentication, Object userPermissionId) {
-        Integer userId = (Integer) userPermissionId;
+    public boolean hasPermissionForUser(Authentication authentication, Integer userId) {
         User authenticationUser = userRepository.findByEmail(authentication.getName());
         if (Objects.equals(authenticationUser.getId(), userId)) {
             return true;
         }
         LOG.error("User with id {} does not have permission", userId);
+        return false;
+    }
+
+    public boolean hasPermissionForTask(Authentication authentication, Integer taskId) {
+        User authenticationUser = userRepository.findByEmail(authentication.getName());
+        if (taskRepository.isTaskContainingInUser(taskId, authenticationUser.getId())) {
+            return true;
+        }
+        LOG.error("User with id {} does not have permission", authenticationUser.getId());
         return false;
     }
 
