@@ -16,7 +16,8 @@ import java.util.List;
 @Configuration
 @EnableWebMvc
 @Import({ServiceConfiguration.class})
-@ComponentScan(basePackages = {"com.nerdysoft.taskmanager.controller"})
+@ComponentScan(basePackages =
+        {"com.nerdysoft.taskmanager.controller", "com.nerdysoft.taskmanager.handler"})
 public class MvcConfiguration extends WebMvcConfigurerAdapter {
 
     @Override

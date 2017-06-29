@@ -29,8 +29,8 @@ public final class SecurityUtil {
         writer.write(mapper.writeValueAsString(errorInfo));
         writer.flush();
         writer.close();
-        LOG.debug("Anonymous with ip {}  port {} , tries to login but receives an error {}",
-                request.getRemoteAddr(), request.getRemotePort(), message);
+        LOG.debug("Anonymous with ip {}  port {} , tries to follow {} but receives an error {}",
+                request.getRemoteAddr(), request.getRemotePort(),request.getRequestURL(), message);
     }
 
     public static void sendResponse(HttpServletRequest request, HttpServletResponse response,

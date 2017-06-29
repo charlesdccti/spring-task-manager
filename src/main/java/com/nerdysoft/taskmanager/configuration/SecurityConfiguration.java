@@ -1,6 +1,6 @@
 package com.nerdysoft.taskmanager.configuration;
 
-import com.nerdysoft.taskmanager.configuration.security.RequestMatcher;
+import com.nerdysoft.taskmanager.configuration.security.CsrfRequestMatcher;
 import com.nerdysoft.taskmanager.configuration.security.RestUnauthorizedEntryPoint;
 import com.nerdysoft.taskmanager.configuration.security.UserDetailsService;
 import org.springframework.context.annotation.ComponentScan;
@@ -56,15 +56,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        Map<String, String> patterns = new HashMap<>();
-        patterns.put("/api/login", "POST");
-        patterns.put("/api/users/", "POST");
-        patterns.put("/api/users", "PATCH");
+        Map<String, String[]> requireCsrfPatterns = new HashMap<>();
+        requireCsrfPatterns.put("/api/users/**", new String[]{"GET","PUT","PATCH","DELETE"});
+        requireCsrfPatterns.put("/api/tasks/**", new String[]{"GET","POST","PUT","PATCH","DELETE"});
 
         http
                 .csrf()
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                    .requireCsrfProtectionMatcher(new RequestMatcher(patterns))
+                    .requireCsrfProtectionMatcher(new CsrfRequestMatcher(requireCsrfPatterns))
+                    .ignoringAntMatchers("/api/users")
                     .and()
                 .authorizeRequests()
                     .antMatchers(HttpMethod.POST, "/api/login").anonymous()
@@ -72,6 +72,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .antMatchers(HttpMethod.PATCH, "/api/users").anonymous()
                     .antMatchers("/api/users/**").hasAnyRole("USER", "ADMIN")
                     .antMatchers("/api/tasks/**").hasAnyRole("USER", "ADMIN")
+                    .antMatchers("/**").permitAll()
                     .and()
                 .exceptionHandling()
                     .authenticationEntryPoint(restAuthenticationEntryPoint)

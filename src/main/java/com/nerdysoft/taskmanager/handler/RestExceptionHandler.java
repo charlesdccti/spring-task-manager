@@ -1,12 +1,9 @@
-package com.nerdysoft.taskmanager.controller;
+package com.nerdysoft.taskmanager.handler;
 
 import com.nerdysoft.taskmanager.exception.EntityAlreadyExistsException;
 import com.nerdysoft.taskmanager.exception.EntityNotFoundException;
 import com.nerdysoft.taskmanager.exception.ValidationException;
 import com.nerdysoft.taskmanager.model.ErrorInfo;
-import com.nerdysoft.taskmanager.service.impl.UserServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -18,17 +15,14 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
 
 @ControllerAdvice(annotations = RestController.class)
-public class GlobalExceptionController {
-
-    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+public class RestExceptionHandler extends AbstractExceptionHandler {
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     @ResponseBody
-    @Order(Ordered.HIGHEST_PRECEDENCE + 2)
+    @Order(Ordered.HIGHEST_PRECEDENCE)
     public ErrorInfo mediaTypeError(HttpServletRequest req, HttpMediaTypeNotSupportedException e) {
         return logAndGetErrorInfo(req, e);
     }
@@ -37,7 +31,7 @@ public class GlobalExceptionController {
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseBody
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    public ErrorInfo handleError(HttpServletRequest req, EntityNotFoundException e) {
+    public ErrorInfo notFoundError(HttpServletRequest req, EntityNotFoundException e) {
         return logAndGetErrorInfo(req, e);
     }
 
@@ -45,14 +39,14 @@ public class GlobalExceptionController {
     @ExceptionHandler(EntityAlreadyExistsException.class)
     @ResponseBody
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    public ErrorInfo conflict(HttpServletRequest req, EntityAlreadyExistsException e) {
+    public ErrorInfo alreadyExistsError(HttpServletRequest req, EntityAlreadyExistsException e) {
         return logAndGetErrorInfo(req, e);
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BindException.class)
     @ResponseBody
-    @Order(Ordered.HIGHEST_PRECEDENCE + 2)
+    @Order(Ordered.HIGHEST_PRECEDENCE)
     public ErrorInfo bindValidationError(HttpServletRequest req, BindingResult result) {
         return logAndGetValidationErrorInfo(req, result);
     }
@@ -60,8 +54,8 @@ public class GlobalExceptionController {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
-    @Order(Ordered.HIGHEST_PRECEDENCE + 2)
-    public ErrorInfo restValidationError(HttpServletRequest req, MethodArgumentNotValidException e) {
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    public ErrorInfo validationError(HttpServletRequest req, MethodArgumentNotValidException e) {
         return logAndGetValidationErrorInfo(req, e.getBindingResult());
     }
 
@@ -69,37 +63,23 @@ public class GlobalExceptionController {
     @ExceptionHandler(ValidationException.class)
     @ResponseBody
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    public ErrorInfo restValidationError(HttpServletRequest req, ValidationException e) {
+    public ErrorInfo validationError(HttpServletRequest req, ValidationException e) {
         return logAndGetErrorInfo(req, e);
     }
 
     @ResponseStatus(value = HttpStatus.FORBIDDEN)
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseBody
-    @Order(Ordered.HIGHEST_PRECEDENCE + 2)
-    public ErrorInfo restAccessDeniedError(HttpServletRequest req, AccessDeniedException e) {
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    public ErrorInfo accessDeniedError(HttpServletRequest req, AccessDeniedException e) {
         return logAndGetErrorInfo(req, e);
     }
-
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     @ResponseBody
-    @Order(Ordered.LOWEST_PRECEDENCE)
-    public ErrorInfo handleError(HttpServletRequest req, Exception e) {
+    public ErrorInfo serverError(HttpServletRequest req, Exception e) {
         return logAndGetErrorInfo(req, e);
-    }
-
-    private ErrorInfo logAndGetValidationErrorInfo(HttpServletRequest req, BindingResult result) {
-        String[] details = result.getFieldErrors().stream()
-                .map(fe -> fe.getField() + ' ' + fe.getDefaultMessage()).toArray(String[]::new);
-        logger.error("Validation exception at request " + req.getRequestURL() + ": " + Arrays.toString(details));
-        return new ErrorInfo(req.getRequestURL(), "ValidationException", details);
-    }
-
-    private ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e) {
-        logger.error("Exception at request " + req.getRequestURL(), e);
-        return new ErrorInfo(req.getRequestURL(), e);
     }
 
 }
