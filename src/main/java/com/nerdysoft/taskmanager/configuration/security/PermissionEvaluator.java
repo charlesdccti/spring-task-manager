@@ -1,6 +1,7 @@
 package com.nerdysoft.taskmanager.configuration.security;
 
 import com.nerdysoft.taskmanager.entity.User;
+import com.nerdysoft.taskmanager.exception.EntityNotFoundException;
 import com.nerdysoft.taskmanager.repository.TaskRepository;
 import com.nerdysoft.taskmanager.repository.UserRepository;
 import org.slf4j.Logger;
@@ -37,6 +38,10 @@ public class PermissionEvaluator implements org.springframework.security.access.
     }
 
     public boolean hasPermissionForUser(Authentication authentication, Integer userId) {
+        if (!userRepository.exists(userId)) {
+            throw new EntityNotFoundException(
+                    String.format("User with id %d not found", userId));
+        }
         User authenticationUser = userRepository.findByEmail(authentication.getName());
         if (Objects.equals(authenticationUser.getId(), userId)) {
             return true;
@@ -46,6 +51,10 @@ public class PermissionEvaluator implements org.springframework.security.access.
     }
 
     public boolean hasPermissionForTask(Authentication authentication, Integer taskId) {
+        if (!taskRepository.exists(taskId)) {
+            throw new EntityNotFoundException(
+                    String.format("Task with id %d not found", taskId));
+        }
         User authenticationUser = userRepository.findByEmail(authentication.getName());
         if (taskRepository.isTaskContainingInUser(taskId, authenticationUser.getId())) {
             return true;
