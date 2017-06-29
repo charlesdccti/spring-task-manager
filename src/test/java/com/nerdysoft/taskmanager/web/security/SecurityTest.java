@@ -25,7 +25,7 @@ public class SecurityTest extends AbstractTestConfiguration {
     @Test
     public void test_1_loginSuccess() throws Exception {
         mockMvc.perform(post("/api/login")
-                .param("email", "eric_cartman@gmail.com")
+                .param("email", "butters_scotch@gmail.com")
                 .param("password", "g5j$3p4xNxW37GQw")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andDo(print())
