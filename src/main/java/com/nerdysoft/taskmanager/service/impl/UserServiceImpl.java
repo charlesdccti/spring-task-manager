@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -78,6 +79,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User update(Integer id, User updated, Authentication authentication) {
         User user = userRepository.getOne(id);
+        if (!Objects.equals(user.getEmail(),updated.getEmail()) &&
+                userRepository.isEmailAlreadyExists(updated.getEmail())) {
+            throw new ValidationException(
+                    String.format("Could not update user with id %d , email already exist", id));
+        }
         user.setUserName(updated.getUserName());
         user.setUserLastName(updated.getUserLastName());
         user.setEmail(updated.getEmail().toLowerCase());

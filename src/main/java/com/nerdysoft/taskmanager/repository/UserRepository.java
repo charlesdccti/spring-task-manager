@@ -16,4 +16,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("SELECT t.users FROM Task t WHERE t.id=:taskId")
     List<User> findByTaskId(@Param("taskId") Integer taskId);
 
+    @Query("SELECT (COUNT (u) > 0) FROM User u WHERE u.email=:email")
+    boolean isEmailAlreadyExists(@Param("email") String email);
+
 }
