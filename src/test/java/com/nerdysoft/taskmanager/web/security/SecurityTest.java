@@ -54,7 +54,7 @@ public class SecurityTest extends AbstractTestConfiguration {
 
     @Test
     public void test_4_logout() throws Exception {
-        mockMvc.perform(get("/api/logout")
+        mockMvc.perform(post("/api/logout")
                 .with(userAuth(USER_WITH_ID_2))
                 .with(csrf()))
                 .andDo(print())

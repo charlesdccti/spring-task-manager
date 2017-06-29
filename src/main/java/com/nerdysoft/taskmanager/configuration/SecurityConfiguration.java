@@ -59,6 +59,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         Map<String, String[]> requireCsrfPatterns = new HashMap<>();
         requireCsrfPatterns.put("/api/users/**", new String[]{"GET","PUT","PATCH","DELETE"});
         requireCsrfPatterns.put("/api/tasks/**", new String[]{"GET","POST","PUT","PATCH","DELETE"});
+        requireCsrfPatterns.put("/api/logout", new String[]{"POST"});
 
         http
                 .csrf()
@@ -86,7 +87,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .passwordParameter("password")
                     .and()
                 .logout()
-                    .logoutRequestMatcher(new AntPathRequestMatcher("/api/logout"))
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/api/logout","POST"))
                     .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
                     .deleteCookies("JSESSIONID");
     }
