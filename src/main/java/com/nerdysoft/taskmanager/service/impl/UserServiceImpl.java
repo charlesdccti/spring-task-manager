@@ -2,6 +2,7 @@ package com.nerdysoft.taskmanager.service.impl;
 
 import com.nerdysoft.taskmanager.entity.Role;
 import com.nerdysoft.taskmanager.entity.User;
+import com.nerdysoft.taskmanager.exception.EntityAlreadyExistsException;
 import com.nerdysoft.taskmanager.exception.EntityNotFoundException;
 import com.nerdysoft.taskmanager.exception.ValidationException;
 import com.nerdysoft.taskmanager.repository.UserRepository;
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -65,6 +67,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void save(User user) {
+        if (userRepository.isEmailAlreadyExists(user.getEmail())) {
+            throw new EntityAlreadyExistsException(
+                    String.format("Could not create user, email %s already exist", user.getEmail()));
+        }
         user.setEmail(user.getEmail().toLowerCase());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user.setEnabled(true);
@@ -79,16 +85,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public User update(Integer id, User updated, Authentication authentication) {
         User user = userRepository.getOne(id);
-        if (!Objects.equals(user.getEmail(),updated.getEmail()) &&
+        if (!Objects.equals(user.getEmail(), updated.getEmail()) &&
                 userRepository.isEmailAlreadyExists(updated.getEmail())) {
-            throw new ValidationException(
-                    String.format("Could not update user with id %d , email already exist", id));
+            throw new EntityAlreadyExistsException(
+                    String.format("Could not update user with id %d , email %s already exist",
+                            id, updated.getEmail()));
         }
         user.setUserName(updated.getUserName());
         user.setUserLastName(updated.getUserLastName());
         user.setEmail(updated.getEmail().toLowerCase());
         List<String> authenticationRoles = authentication.getAuthorities()
-                .stream().map(authorities -> authorities.getAuthority()).collect(Collectors.toList());
+                .stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
         if (authenticationRoles.contains("ROLE_ADMIN")) {
             user.setEnabled(updated.getEnabled());
             user.setAdmin(updated.getAdmin());

@@ -1,5 +1,6 @@
 package com.nerdysoft.taskmanager.controller;
 
+import com.nerdysoft.taskmanager.exception.EntityAlreadyExistsException;
 import com.nerdysoft.taskmanager.exception.EntityNotFoundException;
 import com.nerdysoft.taskmanager.exception.ValidationException;
 import com.nerdysoft.taskmanager.model.ErrorInfo;
@@ -37,6 +38,14 @@ public class GlobalExceptionController {
     @ResponseBody
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public ErrorInfo handleError(HttpServletRequest req, EntityNotFoundException e) {
+        return logAndGetErrorInfo(req, e);
+    }
+
+    @ResponseStatus(value = HttpStatus.CONFLICT)
+    @ExceptionHandler(EntityAlreadyExistsException.class)
+    @ResponseBody
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    public ErrorInfo conflict(HttpServletRequest req, EntityAlreadyExistsException e) {
         return logAndGetErrorInfo(req, e);
     }
 
