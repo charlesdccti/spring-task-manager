@@ -76,7 +76,7 @@ public class UserAccessDeniedTest extends AbstractTestConfiguration {
 
     @Test
     public void test_7_deleteTasksForUser() throws Exception {
-        mockMvc.perform(delete("/api/users/4/tasks")
+        mockMvc.perform(delete("/api/users/1/tasks")
                 .with(userAuth(USER_WITH_ID_2))
                 .with(csrf()))
                 .andDo(print())
