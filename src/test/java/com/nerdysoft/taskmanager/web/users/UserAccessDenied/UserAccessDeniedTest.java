@@ -20,7 +20,7 @@ public class UserAccessDeniedTest extends AbstractTestConfiguration {
     @Test
     public void test_1_getUsers() throws Exception {
         mockMvc.perform(get("/api/users/")
-                .with(userAuth(USER_WITH_ID_1))
+                .with(userAuth(USER_WITH_ID_9))
                 .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isForbidden());
@@ -38,7 +38,7 @@ public class UserAccessDeniedTest extends AbstractTestConfiguration {
     @Test
     public void test_3_updateUser() throws Exception {
         mockMvc.perform(put("/api/users/1")
-                .with(userAuth(USER_WITH_ID_2))
+                .with(userAuth(USER_WITH_ID_7))
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonTestUtil.writeValue(UPDATED_USER_WITH_ID_1)))
@@ -50,7 +50,7 @@ public class UserAccessDeniedTest extends AbstractTestConfiguration {
     public void test_4_userUpdatePassword() throws Exception {
         mockMvc.perform(patch("/api/users/1" +
                 "?currentPassword=g5j$3p4xNxW37GQw&newPassword=NEWg5j$3p4xNxW37GQw")
-                .with(userAuth(USER_WITH_ID_3))
+                .with(userAuth(USER_WITH_ID_10))
                 .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isForbidden());
@@ -59,7 +59,7 @@ public class UserAccessDeniedTest extends AbstractTestConfiguration {
     @Test
     public void test_5_deleteUser() throws Exception {
         mockMvc.perform(delete("/api/users/1?password=g5j$3p4xNxW37GQw")
-                .with(userAuth(USER_WITH_ID_4))
+                .with(userAuth(USER_WITH_ID_10))
                 .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isForbidden());

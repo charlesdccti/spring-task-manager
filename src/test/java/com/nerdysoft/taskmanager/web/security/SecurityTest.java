@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 
 import static com.nerdysoft.taskmanager.util.SecurityTestUtil.*;
 import static com.nerdysoft.taskmanager.util.TestDataUtil.*;
+import static com.nerdysoft.taskmanager.util.TestDataUtil.UPDATED_USER_WITH_ID_10;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -94,15 +95,15 @@ public class SecurityTest extends AbstractTestConfiguration {
 
     @Test
     public void test_9_UserTryUpdateRowIsAdmin() throws Exception {
-        mockMvc.perform(put("/api/users/3")
-                .with(userAuth(USER_WITH_ID_3))
+        mockMvc.perform(put("/api/users/10")
+                .with(userAuth(USER_WITH_ID_10))
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonTestUtil.writeValue(UPDATED_USER_WITH_ID_3)))
+                .content(JsonTestUtil.writeValue(UPDATED_USER_WITH_ID_10)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(
-                        JsonTestUtil.writeValue(USER_WITH_ID_3))));
+                        JsonTestUtil.writeValue(USER_WITH_ID_10))));
     }
 
 }

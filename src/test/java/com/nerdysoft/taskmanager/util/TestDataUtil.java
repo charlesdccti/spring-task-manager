@@ -57,8 +57,8 @@ public final class TestDataUtil {
             "g5j$3p4xNxW37GQw", "herbert_garrison@gmail.com", true, false, LocalDate.of(2017, 5, 9));
     public static final User UPDATED_USER_WITH_ID_1 = new User(1, "Chef", "McElroy",
             "g5j$3p4xNxW37GQw", "chef_mcelroy@gmail.com", true, false, LocalDate.of(2017, 5, 9));
-    public static final User UPDATED_USER_WITH_ID_3 = new User(3, "Kyle", "Broflovski",
-            "g5j$3p4xNxW37GQw", "kyle_broflovski@gmail.com", true, true, LocalDate.of(2017, 4, 9));
+    public static final User UPDATED_USER_WITH_ID_10 = new User(10, "Ike", "Broflovski",
+            "g5j$3p4xNxW37GQw", "ike_broflovski@gmail.com", true, true, LocalDate.of(2017, 4, 8));
     public static final User INVALID_USER_WITH_ID_4 = new User(1, null, null,
             null, "", true, false, LocalDate.of(2017, 5, 9));
     public static final User INVALID_NEW_USER = new User(0, "", "",
