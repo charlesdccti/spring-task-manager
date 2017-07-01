@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 @ControllerAdvice(annotations = RestController.class)
 public class RestExceptionHandler extends AbstractExceptionHandler {
 
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ResponseStatus(value = HttpStatus.UNSUPPORTED_MEDIA_TYPE)
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     @ResponseBody
     @Order(Ordered.HIGHEST_PRECEDENCE)
