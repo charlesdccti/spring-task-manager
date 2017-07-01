@@ -15,7 +15,8 @@ REST interface is covered by JUnit tests using Spring MVC Test and Spring Securi
      - Profiles
 - Hibernate
   - Validation
-- Jackson
+- REST 
+  - Jackson
 - MySQL 
 - HSQLDB 
 - Logback 
